@@ -1,0 +1,41 @@
+version: '3'
+
+# é um nome e uma configuração de container.
+services:
+
+  api:
+    image: node:fermium-alpine # versão do node
+    command: yarn start:dev
+    depends_on: # podemos falar que esse serviço depende de outros serviços
+      - mongodb
+      - redis
+      # ele vai subir esses 2 serviços
+    ports: 
+      - "3000:3000"
+      - "9229:9229" # porta para debugar nosso container.
+    volumes: 
+      - ./:/app # O diretorio ./ do nosso projeto e o mesmo da pasta /app dentro do container
+    working_dir: /app # pasta principal do nosso container.
+    networks: # falando para esse serviço usar a rede rs_ws_env_nw virtual.
+      - rs_ws_env_nw
+
+  # nome do nosso container.
+  mongodb: 
+    image: mongo:latest # imagem do nosso container
+    ports: # portas que queremos expor do container para minha maquina local
+      - "27017:27017"
+    networks: # falando para esse serviço usar a rede rs_ws_env_nw virtual.
+      - rs_ws_env_nw
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks: # falando para esse serviço usar a rede rs_ws_env_nw virtual.
+      - rs_ws_env_nw
+
+# podemos criar redes virtuais.
+# aqui e so para os serviços se enxergarem na mesma rede.
+networks: 
+  rs_ws_env_nw: # nome da nossa rede virtual
+    # aqui podemos colocar drivers

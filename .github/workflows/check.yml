@@ -1,0 +1,38 @@
+name: Check
+
+# quando rolar um push em qualquer branch eu quero que rode esses jobs.
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest # vm
+
+    strategy:
+      matrix:
+        node-version: [14.x] # versão do node
+
+    steps:
+      - uses: actions/checkout@v2 # Primeiro faz o clone
+
+      - name: Use Node.JS ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm ci # npm install
+        name: Install
+
+      - run: npm run lint
+        name: Lint
+
+      - run: docker-compose up -d mongodb redis # subi nossos containers
+        name: Start infrastructure
+
+      - run: npm run test # rodar nossos testes
+        name: Tests
+
+      - run: docker-compose down # matar nossos containers
+        name: Dispose infrastructure
