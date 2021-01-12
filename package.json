@@ -9,7 +9,7 @@
     "lint": "npm run prepare:pipeline; eslint ./",
     "lint:fix": "npm run lint -- --fix",
     "prepare:pipeline": "rm -rf */lcov-report coverage",
-    "test": "run test:unit && npm run test:integration",
+    "test": "npm run test:unit && npm run test:integration",
     "test:cover": "nyc npm test",
     "test:unit": "NODE_ENV=test mocha --require tests/helpers \"api/**/*@(.spec.js)\" --timeout 5000",
     "test:unit:debug": "NODE_ENV=test mocha --inspect-brk --require tests/helpers \"api/**/*@(.spec.js)\" --timeout 5000",
